@@ -6,12 +6,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
     try {
         const { filename, contentType, size } = await req.json();
 
         if (!filename || !contentType || !size) {
-            return NextResponse.json({ error: "Missing fields" }), { status: 400 }
+            return NextResponse.json({ error: "Missing fields" }, { status: 400 })
         }
         if (size > MAX_FILE_SIZE) {
             return NextResponse.json({ error: "File too large. Maximum size is 10MB" }, { status: 400 });
@@ -28,7 +28,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const document = await prisma.document.create({
             data: { filename, r2key, size, mimetype: contentType }
         });
-        return NextResponse.json({ presignedUrl, document: document.id, r2key }, { status: 201 });
+        // 'document' could be mistaken for the whole document object; 'documentId' makes intent explicit
+        return NextResponse.json({ presignedUrl, documentId: document.id, r2key }, { status: 201 });
     }
     catch (error) {
         console.log("[POST  /api/upload ]", error);

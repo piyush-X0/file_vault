@@ -19,12 +19,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         if (!documents) {
             return NextResponse.json({ error: "Document is not found" }, { status: 404 });
         }
+        const safeFileName = encodeURIComponent(documents.filename);
+
+        const contentDisposition = mode === "download" ?
+            `attachment; filename="${safeFileName}"
+            ` : `inline; filename="${safeFileName}"`
         const command = new GetObjectCommand({
             Bucket: BUCKET_NAME,
             Key: documents.r2key,
-            ResponseContentDisposition: mode === "download"
-                ? `attachments ; filename="${documents.filename}"`
-                : `inline ; filename="${documents.filename}"`,
+            ResponseContentDisposition: contentDisposition,
             ResponseContentType: documents.mimetype
         });
         const presignedUrl = await getSignedUrl(r2Client, command, { expiresIn: 3600 }); // 1 hour

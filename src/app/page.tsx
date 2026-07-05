@@ -15,6 +15,7 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [uploading, setUploading] = useState(false);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [viewingId, setViewingId] = useState<string | null>(null);
 
   async function fetchDocuments() {
     try {
@@ -91,6 +92,21 @@ export default function Home() {
       setStatus("Something went Wrong....");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleViewing(id: string) {
+    setViewingId(id);
+    try {
+      const res = await fetch(`/api/documents/${id}/url?mode=view`);
+      if (!res.ok) throw new Error("failed to get URL...");
+
+      const { url } = await res.json();
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch {
+      console.error("view failed...");
+    } finally {
+      setViewingId(null);
     }
   }
 
@@ -238,32 +254,60 @@ export default function Home() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => handleDownloading(doc.id, doc.filename)}
-                  disabled={loadingId === doc.id}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-[5px] text-[12px] font-mono shrink-0 transition-colors duration-100
-                  ${
-                    loadingId === doc.id
-                      ? "border-neutral-800 text-neutral-700 cursor-not-allowed"
-                      : "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300 cursor-pointer"
-                  }`}
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => handleViewing(doc.id)}
+                    disabled={viewingId === doc.id}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-[5px] text-[12px] font-mono transition-colors duration-100
+                    ${
+                      viewingId === doc.id
+                        ? "border-neutral-800 text-neutral-700 cursor-not-allowed"
+                        : "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300 cursor-pointer"
+                    }`}
                   >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  {loadingId === doc.id ? "..." : "Download"}
-                </button>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    {viewingId === doc.id ? "..." : "View"}
+                  </button>
+
+                  <button
+                    onClick={() => handleDownloading(doc.id, doc.filename)}
+                    disabled={loadingId === doc.id}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-[5px] text-[12px] font-mono transition-colors duration-100
+                    ${
+                      loadingId === doc.id
+                        ? "border-neutral-800 text-neutral-700 cursor-not-allowed"
+                        : "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300 cursor-pointer"
+                    }`}
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    {loadingId === doc.id ? "..." : "Download"}
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
