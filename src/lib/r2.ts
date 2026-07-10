@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 export const r2Client = new S3Client({
     region: "auto",
@@ -9,3 +9,16 @@ export const r2Client = new S3Client({
     }
 });
 export const BUCKET_NAME = process.env.R2_BUCKET_NAME!
+
+
+export async function getFileBuffer(r2key: string): Promise<Buffer> {
+
+    const command = new GetObjectCommand({ Bucket: BUCKET_NAME, Key: r2key });
+    const response = await r2Client.send(command);
+
+    if (!response.Body) {
+        throw new Error(`No file body returned for key ${r2key}`);
+    }
+    const byteArray = await response.Body.transformToByteArray();
+    return Buffer.from(byteArray);
+}
