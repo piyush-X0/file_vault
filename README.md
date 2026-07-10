@@ -1,25 +1,18 @@
-# file-vault
+# RAG Pipeline 
+Building a Retrieval-Augmented Generation (RAG) pipeline from scratch to understand how AI document chat actually works under the hood.
 
-built this to understand how file storage actually works.
+## What I'm Building
+A system that lets you upload a PDF and chat with it using AI — similar to ChatPDF but built by hand, phase by phase.
 
-files go directly from the browser to Cloudflare R2 via presigned URLs — the Next.js server only generates the signed URL, never touches the file bytes.
+## Pipeline Phases
+- **Phase 1** — File upload to cloud storage (Cloudflare R2) with presigned URLs
+- **Phase 2** — Text extraction from PDFs using pdf-parse
+- **Phase 3** — Chunking extracted text into smaller pieces
+- **Phase 4** — Converting chunks into vector embeddings (OpenAI)
+- **Phase 5** — Storing vectors in PostgreSQL using pgvector
+- **Phase 6** — Query and retrieval — answering questions from the document
+  
+## Stack
+Next.js · PostgreSQL · Prisma · Cloudflare R2 · AWS · OpenAI · LangChain
 
-## what i learned
-
-• presigned URLs (PUT for upload, GET for download)
-
-• S3-compatible storage with Cloudflare R2
-
-• Prisma + Neon Postgres for metadata
-
-## stack
-
-• Next.js 15
-
-• Cloudflare R2
-
-• Neon Postgres
-
-• Prisma
-
-• Tailwind CSS (minimal UI, not the focus)
+Currently on: **Phase 2 — Text Extraction**
