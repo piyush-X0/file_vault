@@ -1,4 +1,3 @@
-import { raw } from "@prisma/client/runtime/client";
 import mammoth from "mammoth";
 
 export async function ExtractText(buffer: Buffer, mimetype: string): Promise<string> {
