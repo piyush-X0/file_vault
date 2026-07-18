@@ -9,7 +9,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
         const document = await prisma.document.findUnique({
             where: { id },
-            select: { id: true, r2key: true, mimetype: true, uploadStatus: true, extractionStatus: true }
+            select: { id: true, r2key: true, mimetype: true, uploadStatus: true, extractedStatus: true }
         });
 
         if (!document) {
@@ -18,16 +18,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         if (document.uploadStatus !== "UPLOADED") {
             return NextResponse.json({ error: "File not confirmed as uploaded yet" }, { status: 409 });
         }
-        if (document.extractionStatus === "PROCESSING") {
+        if (document.extractedStatus === "PROCESSING") {
             return NextResponse.json({ error: "Extraction already in progress" }, { status: 409 });
         }
-        if (document.extractionStatus === "EXTRACTED") {
+        if (document.extractedStatus === "EXTRACTED") {
             return NextResponse.json({ status: "EXTRACTED", message: "Already extracted" }, { status: 200 });
         }
 
         await prisma.document.update({
             where: { id },
-            data: { extractionStatus: "PROCESSING", extractionError: null }
+            data: { extractedStatus: "PROCESSING", extractionError: null }
         });
 
         try {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
             const updated = await prisma.document.update({
                 where: { id },
-                data: { extractedText: text, extractionStatus: "EXTRACTED", extractionError: null }
+                data: { extractedText: text, extractedStatus: "EXTRACTED", extractionError: null }
             });
 
             return NextResponse.json({ status: updated.extractedStatus, textLength: text.length });
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
             await prisma.document.update({
                 where: { id },
-                data: { extractionStatus: "FAILED", extractionError: message }
+                data: { extractedStatus: "FAILED", extractionError: message }
             });
 
             console.log("[extract failed]", { documentId: id, error: message });

@@ -130,7 +130,6 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white font-mono flex flex-col items-center px-6 py-16">
       <div className="w-full max-w-xl">
-        {/* Header */}
         <div className="mb-12">
           <p className="text-[11px] text-neutral-600 tracking-widest uppercase mb-2">
             file-vault
@@ -140,7 +139,6 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* Upload area */}
         <div
           className={`border border-dashed border-neutral-800 rounded-lg p-7 mb-3 transition-colors duration-150 ${file ? "bg-neutral-950" : "bg-transparent"}`}
         >
@@ -201,15 +199,12 @@ export default function Home() {
           )}
         </div>
 
-        {/* Status */}
         {status && (
           <p className="text-[12px] text-neutral-500 pl-1 mb-8">{status}</p>
         )}
 
-        {/* Divider */}
         <div className="border-t border-neutral-900 my-8" />
 
-        {/* File list */}
         <div>
           <p className="text-[11px] text-neutral-600 tracking-widest uppercase mb-4">
             {documents.length === 0

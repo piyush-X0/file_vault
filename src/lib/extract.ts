@@ -5,10 +5,15 @@ export async function ExtractText(buffer: Buffer, mimetype: string): Promise<str
 
     switch (mimetype) {
         case "application/pdf": {
-            const pdfParseModule = await (import("pdf-parse")) as any;
-            const pdfParse = pdfParseModule.default || pdfParseModule;
-            const data = await pdfParse(buffer);
-            rawText = data.text;
+            const { PDFParse } = await import("pdf-parse");
+            const parser = new PDFParse({ data: buffer });
+            try {
+                const data = await parser.getText();
+                rawText = data.text;
+            }
+            finally {
+                await parser.destroy();
+            }
             break;
         }
         case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
