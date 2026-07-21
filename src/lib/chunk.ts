@@ -12,61 +12,47 @@ export function chunkText(
     chunkSize: number = DEFAULT_CHUNK_SIZE,
     overlap: number = DEFAULT_OVERLAP
 ): Chunk[] {
-    const segments = splitRecursively(text, chunkSize);
+    if (!text || chunkSize <= 0) return [];
 
     const chunks: Chunk[] = [];
-    let buffer = "";
+    const separators = ["\n\n", "\n", ". ", " "];
 
-    for (const segment of segments) {
-        if ((buffer + segment).length > chunkSize && buffer.length > 0) {
-            chunks.push(makeChunk(buffer, chunks.length));
-            const tail = buffer.slice(-overlap);
-            buffer = tail + segment;
+    let currentPosition = 0;
+    while (currentPosition < text.length) {
+        let endPosition = currentPosition + chunkSize;
+
+        if (endPosition >= text.length) {
+            endPosition = text.length;
         } else {
-            buffer += segment;
+            const windowText = text.slice(currentPosition, endPosition);
+            let foundSeparator = false;
+            for (const sep of separators) {
+                const lastIndex = windowText.lastIndexOf(sep);
+                if (lastIndex !== -1 && lastIndex > 0) {
+                    endPosition = currentPosition + lastIndex + sep.length;
+                    foundSeparator = true;
+                    break;
+                }
+            }
+            if (!foundSeparator) {
+                endPosition = currentPosition + chunkSize;
+            }
         }
-    }
-    if (buffer.trim().length > 0) {
-        chunks.push(makeChunk(buffer, chunks.length));
+
+        const content = text.slice(currentPosition, endPosition);
+        chunks.push({
+            content: content.trim(),
+            chunkIndex: chunks.length,
+            charCount: content.trim().length
+        });
+
+        const nextStart = endPosition - overlap;
+        if (nextStart <= currentPosition) {
+            currentPosition = endPosition;
+        } else {
+            currentPosition = nextStart;
+        }
     }
 
     return chunks;
-}
-
-function makeChunk(content: string, index: number): Chunk {
-    const trimmed = content.trim();
-    return { content: trimmed, chunkIndex: index, charCount: trimmed.length };
-}
-
-function splitRecursively(text: string, chunkSize: number): string[] {
-    const separators = ["\n\n", "\n", ". ", " "];
-    return splitBySeparators(text, separators, chunkSize);
-}
-
-function splitBySeparators(text: string, separators: string[], chunkSize: number): string[] {
-    if (text.length <= chunkSize) return [text];
-
-    const [separator, ...rest] = separators;
-
-    if (!separator) {
-        const pieces: string[] = [];
-        for (let i = 0; i < text.length; i += chunkSize) {
-            pieces.push(text.slice(i, i + chunkSize));
-        }
-        return pieces;
-    }
-
-    const parts = text.split(separator);
-    const result: string[] = [];
-
-    for (const part of parts) {
-        const piece = part + separator;
-        if (piece.length > chunkSize) {
-            result.push(...splitBySeparators(piece, rest, chunkSize));
-        } else {
-            result.push(piece);
-        }
-    }
-
-    return result;
 }
