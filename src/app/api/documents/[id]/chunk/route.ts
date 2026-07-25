@@ -14,6 +14,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         if (!document) {
             return NextResponse.json({ error: "Document not found" }, { status: 404 });
         }
+
         if (document.extractionStatus !== "EXTRACTED" || !document.extractedText) {
             return NextResponse.json({ error: "Document has not been extracted yet" }, { status: 409 });
         }
@@ -24,7 +25,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         }
 
         const chunks = chunkText(document.extractedText);
-
         await prisma.documentChunk.createMany({
             data: chunks.map((chunk) => ({
                 documentId: id,
@@ -35,6 +35,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         });
 
         return NextResponse.json({ status: "CHUNKED", chunkCount: chunks.length });
+
     } catch (error) {
         console.log("[POST /api/documents/[id]/chunk]", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
