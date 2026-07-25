@@ -52,6 +52,9 @@ export function chunkText(
         } else {
             currentPosition = nextStart;
         }
+        if (text.length - currentPosition <= overlap) {
+            break;
+        }
     }
 
     return chunks;
