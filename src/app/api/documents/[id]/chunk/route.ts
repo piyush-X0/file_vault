@@ -8,14 +8,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
         const document = await prisma.document.findUnique({
             where: { id },
-            select: { id: true, extractionStatus: true, extractedText: true }
+            select: { id: true, extractedStatus: true, extractedText: true }
         });
 
         if (!document) {
             return NextResponse.json({ error: "Document not found" }, { status: 404 });
         }
 
-        if (document.extractionStatus !== "EXTRACTED" || !document.extractedText) {
+        if (document.extractedStatus !== "EXTRACTED" || !document.extractedText) {
             return NextResponse.json({ error: "Document has not been extracted yet" }, { status: 409 });
         }
 

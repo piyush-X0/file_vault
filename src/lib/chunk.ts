@@ -7,6 +7,17 @@ interface Chunk {
     charCount: number;
 }
 
+function snapToWordBoundary(text: string, position: number): number {
+    if (position <= 0 || text[position - 1] === " " || text[position - 1] === "\n") {
+        return position;
+    }
+    let i = position;
+    while (i < text.length && text[i] !== " " && text[i] !== "\n") {
+        i++;
+    }
+    return i;
+}
+
 export function chunkText(
     text: string,
     chunkSize: number = DEFAULT_CHUNK_SIZE,
@@ -50,8 +61,9 @@ export function chunkText(
         if (nextStart <= currentPosition) {
             currentPosition = endPosition;
         } else {
-            currentPosition = nextStart;
+            currentPosition = snapToWordBoundary(text, nextStart);
         }
+
         if (text.length - currentPosition <= overlap) {
             break;
         }
