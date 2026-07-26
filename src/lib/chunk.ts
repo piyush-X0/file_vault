@@ -1,3 +1,5 @@
+import { snapToSentenceBoundary } from "@/scripts/snapToSentenceBoundary";
+
 const DEFAULT_CHUNK_SIZE = 1000;
 const DEFAULT_OVERLAP = 150;
 
@@ -5,17 +7,6 @@ interface Chunk {
     content: string;
     chunkIndex: number;
     charCount: number;
-}
-
-function snapToWordBoundary(text: string, position: number): number {
-    if (position <= 0 || text[position - 1] === " " || text[position - 1] === "\n") {
-        return position;
-    }
-    let i = position;
-    while (i < text.length && text[i] !== " " && text[i] !== "\n") {
-        i++;
-    }
-    return i;
 }
 
 export function chunkText(
@@ -61,7 +52,7 @@ export function chunkText(
         if (nextStart <= currentPosition) {
             currentPosition = endPosition;
         } else {
-            currentPosition = snapToWordBoundary(text, nextStart);
+            currentPosition = snapToSentenceBoundary(text, nextStart);
         }
 
         if (text.length - currentPosition <= overlap) {
