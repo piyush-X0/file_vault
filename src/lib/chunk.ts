@@ -52,7 +52,9 @@ export function chunkText(
         if (nextStart <= currentPosition) {
             currentPosition = endPosition;
         } else {
-            currentPosition = snapToSentenceBoundary(text, nextStart);
+            const snapped = snapToSentenceBoundary(text, nextStart);
+
+            currentPosition = snapped > currentPosition ? snapped : endPosition;
         }
 
         if (text.length - currentPosition <= overlap) {
