@@ -19,4 +19,4 @@ A system that lets you upload a PDF and chat with it using AI — similar to Cha
 
 Next.js · PostgreSQL · Prisma · Cloudflare R2 · AWS · OpenAI · LangChain
 
-Currently on: **Phase 3 — *Chunking*
+Currently on: \**Phase 4 — *Embedding\*
