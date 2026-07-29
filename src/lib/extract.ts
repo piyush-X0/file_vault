@@ -31,6 +31,5 @@ export async function ExtractText(buffer: Buffer, mimetype: string): Promise<str
     if (!rawText.trim()) {
         throw new Error("Extraction produced no text ( possibly  a scanned/image-only file ) ")
     }
-    rawText = rawText.replace(/([a-z])([A-Z])/g, "$1 $2");
     return rawText.replace(/\u0000/g, "");
 }

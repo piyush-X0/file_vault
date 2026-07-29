@@ -39,13 +39,14 @@ model Document {
 }
 
 model DocumentChunk {
-  id         String   @id @default(cuid())
+  id         String                       @id @default(cuid())
   documentId String
-  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  content    String   @db.Text
+  document   Document                     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  content    String                       @db.Text
   chunkIndex Int
   charCount  Int
-  createdAt  DateTime @default(now())
+  embedding  Unsupported("vector(1536)")?
+  createdAt  DateTime                     @default(now())
 
   @@unique([documentId, chunkIndex])
   @@index([documentId])

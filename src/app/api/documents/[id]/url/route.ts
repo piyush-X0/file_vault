@@ -32,8 +32,7 @@ export async function GET(
 
     const contentDisposition =
       mode === "download"
-        ? `attachment; filename="${safeFileName}"
-            `
+        ? `attachment; filename="${safeFileName}"`
         : `inline; filename="${safeFileName}"`;
     const command = new GetObjectCommand({
       Bucket: BUCKET_NAME,
