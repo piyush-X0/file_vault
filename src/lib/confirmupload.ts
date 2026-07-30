@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { prisma } from "./prisma";
 import { r2Client, BUCKET_NAME } from "./r2";
 import { HeadObjectCommand } from "@aws-sdk/client-s3";

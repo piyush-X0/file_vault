@@ -22,6 +22,13 @@ enum ExtractedStatus {
   FAILED
 }
 
+enum EmbeddingStatus {
+  PENDING
+  PROCESSING
+  EMBEDDED
+  FAILED
+}
+
 model Document {
   id              String          @id @default(cuid())
   filename        String
@@ -32,10 +39,13 @@ model Document {
   extractedStatus ExtractedStatus @default(PENDING)
   extractedText   String?         @db.Text
   extractionError String?
+  embeddingStatus EmbeddingStatus @default(PENDING)
+  embeddingError  String?
   createdAt       DateTime        @default(now())
   chunk           DocumentChunk[]
 
   @@index([extractedStatus])
+  @@index([embeddingStatus])
 }
 
 model DocumentChunk {
