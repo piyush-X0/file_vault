@@ -6,6 +6,13 @@ const EMBEDDING_MODEL = "gemini-embedding-001";
 
 const OUTPUT_DIMENSIONS = 1536;
 
+function normalize(vector: number[]): number[] {
+    const magnitude = Math.sqrt(vector.reduce((sum, v) => sum + v * v, 0));
+    if (magnitude == 0) {
+        throw Error("Zero Magnitude vector , cannot normalized");
+    }
+    return vector.map((v) => v / magnitude);
+}
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 
     if (texts.length === 0) return [];
@@ -33,7 +40,7 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
             throw new Error(`Missing embedding values at index ${i}`);
         }
 
-        result[i] = values;
+        result[i] = normalize(values);
     }
 
     return result;
