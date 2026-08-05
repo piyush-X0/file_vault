@@ -1,22 +1,34 @@
-# RAG Pipeline
+# file_vault
 
-Building a Retrieval-Augmented Generation (RAG) pipeline from scratch to understand how AI document chat actually works under the hood.
-
-## What I'm Building
-
-A system that lets you upload a PDF and chat with it using AI — similar to ChatPDF but built by hand, phase by phase.
-
-## Pipeline Phases
-
-- **Phase 1** — File upload to cloud storage (Cloudflare R2) with presigned URLs
-- **Phase 2** — Text extraction from PDFs using pdf-parse
-- **Phase 3** — Chunking extracted text into smaller pieces
-- **Phase 4** — Converting chunks into vector embeddings (OpenAI)
-- **Phase 5** — Storing vectors in PostgreSQL using pgvector
-- **Phase 6** — Query and retrieval — answering questions from the document
+A RAG pipeline I built to understand how AI document chat works under the hood.
+Every layer studied and implemented from scratch before moving to the next.
 
 ## Stack
 
-Next.js · PostgreSQL · Prisma · Cloudflare R2 · AWS · OpenAI · LangChain
+TypeScript · Next.js · PostgreSQL · Prisma · pgvector
 
-Currently on: \**Phase 6 — *Query Rag Response \*
+## Services & Models
+
+- Cloudflare R2 — file storage
+- Google GenAI — embeddings (`gemini-embedding-001`) + chat (`gemini-2.5-flash`)
+
+## What I built
+
+| Layer |                                       |
+| ----- | ------------------------------------- |
+| 1     | Presigned URL upload to Cloudflare R2 |
+| 2     | PDF text extraction with pdf-parse    |
+| 3     | Recursive text chunking with overlap  |
+| 4     | Vector embeddings stored in pgvector  |
+| 5     | Cosine similarity search → LLM answer |
+
+## What I learned
+
+- Why presigned URLs instead of proxying files through the server
+- How chunking strategy affects retrieval quality
+- Why pgvector over a dedicated vector DB for this scale
+- How similarity search actually works before the LLM sees anything
+
+---
+
+Built it. Broke it. Fixed it. Understood it.
